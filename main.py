@@ -13,13 +13,14 @@ PORT = int(os.getenv("PORT", 3030))
 app = FastAPI()
 
 # Enable CORS so your Vue frontend can call this API
+# Read allowed origins from environment (comma-separated string)
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://ambitious-sea-0420d630f.1.azurestaticapps.net"
-    ],  # your SWA frontend URL
+    allow_origins=ALLOWED_ORIGINS,   # list of allowed origins
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["*"],             # GET, POST, OPTIONS, etc.
     allow_headers=["*"],
 )
 
