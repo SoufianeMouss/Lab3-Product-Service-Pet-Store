@@ -23,7 +23,7 @@ app.add_middleware(
 )
 
 # Define a route for /products
-@app.get("products")
+@app.get("/products")
 async def get_products():
     # Return JSON array of product objects
     return [
