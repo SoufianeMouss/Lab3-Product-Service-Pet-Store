@@ -4,28 +4,33 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-# Load environment variables from .env (only for local dev)
+# Load .env locally (harmless in Azure if no .env exists)
 load_dotenv()
 
-# Fetch the port from environment or default to 3030
+# Read environment variables (Azure injects PORT automatically)
 PORT = int(os.getenv("PORT", 3030))
 
-# Create FastAPI app
 app = FastAPI()
 
-# Enable CORS (Cross-Origin Resource Sharing)
-# Allow requests from any origin, but only GET methods
+# Enable CORS so your Vue frontend can call this API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow requests from any domain
-    allow_methods=["GET"],  # Restrict allowed HTTP methods
+    allow_origins=[
+        "https://ambitious-sea-0420d630f.1.azurestaticapps.net"
+    ],  # your SWA frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Define a route for /products
+# Root endpoint just to check health
+@app.get("/")
+async def root():
+    return {"status": "ok"}
+
+# Products endpoint
 @app.get("/products")
 async def get_products():
-    # Return JSON array of product objects
     return [
         {"id": 1, "name": "Dog Food", "price": 19.99},
         {"id": 2, "name": "Cat Food", "price": 34.99},
@@ -35,5 +40,4 @@ async def get_products():
 
 if __name__ == "__main__":
     import uvicorn
-    # Start the web server
-    uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=PORT)
